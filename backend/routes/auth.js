@@ -2,28 +2,16 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+
 
 const User = require("../models/User");
 
 const router = express.Router();
 
 
-/* =====================================================
-   EMAIL TRANSPORTER
-===================================================== */
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD,
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000,
-});
+const { Resend } = require("resend");
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 
 /* =====================================================
@@ -39,106 +27,59 @@ const FRONTEND_URL =
    SEND VERIFICATION EMAIL
 ===================================================== */
 
-async function sendVerificationEmail(
-  user,
-  token
-) {
-  const verificationLink =
+async function sendVerificationEmail(user, token) {
+  const verificationUrl =
     `${FRONTEND_URL}/verify-email/${token}`;
 
-  await transporter.sendMail({
-    from:
-      `"Expenso" <${process.env.EMAIL_USER}>`,
-
-    to: user.email,
-
-    subject:
-      "Verify your Expenso email",
-
+  const { data, error } = await resend.emails.send({
+    from: "Expenso <onboarding@resend.dev>",
+    to: [user.email],
+    subject: "Verify your Expenso account",
     html: `
-      <div style="
-        font-family:Arial,sans-serif;
-        max-width:600px;
-        margin:auto;
-        padding:35px;
-        color:#253452;
-      ">
-
-        <div style="
-          width:48px;
-          height:48px;
-          background:#ef2027;
-          color:white;
-          border-radius:12px;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          font-size:22px;
-          font-weight:bold;
-        ">
-          E
-        </div>
-
-        <h2 style="
-          color:#14213d;
-          margin-top:25px;
-        ">
-          Verify your Expenso account
-        </h2>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        <h2>Welcome to Expenso, ${user.name}!</h2>
 
         <p>
-          Hello ${user.name},
+          Thank you for creating your Expenso account.
         </p>
 
         <p>
-          Thanks for creating an Expenso account.
-          Please verify your email address to activate
-          your account.
+          Click the button below to verify your email address:
         </p>
 
-        <div style="
-          margin:30px 0;
-        ">
+        <a
+          href="${verificationUrl}"
+          style="
+            display:inline-block;
+            padding:12px 20px;
+            background:#1d4ed8;
+            color:white;
+            text-decoration:none;
+            border-radius:6px;
+          "
+        >
+          Verify Email
+        </a>
 
-          <a
-            href="${verificationLink}"
-            style="
-              display:inline-block;
-              padding:14px 24px;
-              background:#ef2027;
-              color:#fff;
-              text-decoration:none;
-              border-radius:8px;
-              font-weight:bold;
-            "
-          >
-            Verify Email
-          </a>
-
-        </div>
-
-        <p style="
-          color:#667085;
-          font-size:13px;
-        ">
-          This verification link expires in 24 hours.
-        </p>
-
-        <p style="
-          color:#98a2b3;
-          font-size:12px;
-        ">
-          If you did not create this account,
-          you can safely ignore this email.
+        <p style="margin-top:20px;">
+          This verification link will expire in 24 hours.
         </p>
 
         <p>
-          — Expenso
+          If you didn't create this account, you can ignore this email.
         </p>
-
       </div>
     `,
   });
+
+  if (error) {
+    console.error("RESEND EMAIL ERROR:", error);
+    throw new Error(error.message || "Failed to send email");
+  }
+
+  console.log("Verification email sent:", data.id);
+
+  return data;
 }
 
 
