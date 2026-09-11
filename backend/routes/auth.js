@@ -12,24 +12,18 @@ const router = express.Router();
 /* =====================================================
    EMAIL TRANSPORTER
 ===================================================== */
-
-const transporter =
-  nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false,
-    requireTLS: true,
-
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-
-    tls: {
-      family: 4,
-      rejectUnauthorized: false,
-    },
-  });
+const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
+  },
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 10000,
+});
 
 
 /* =====================================================
@@ -200,6 +194,7 @@ router.post(
         return res.status(400).json({
         message: "User already exists",
       });
+      
   // If account exists but email is not verified,
   // generate a completely new verification token.
   if (!existingUser.emailVerified) {
