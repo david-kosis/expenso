@@ -197,7 +197,9 @@ router.post(
 
 
       if (existingUser) {
-
+        return res.status(400).json({
+        message: "User already exists",
+      });
   // If account exists but email is not verified,
   // generate a completely new verification token.
   if (!existingUser.emailVerified) {
@@ -276,7 +278,7 @@ router.post(
             hashedPassword,
 
           emailVerified:
-            true,
+            false,
 
           emailVerificationToken:
             crypto
@@ -298,28 +300,27 @@ router.post(
 
 
       try {
+  await sendVerificationEmail(
+    newUser,
+    verificationToken
+  );
 
-        await sendVerificationEmail(
-          newUser,
-          verificationToken
-        );
+  console.log(
+    "Verification email sent:",
+    newUser.email
+  );
 
-      } catch (emailError) {
+} catch (emailError) {
 
-        console.error(
-          "EMAIL SEND ERROR:",
-          emailError
-        );
+  console.error(
+    "EMAIL SEND ERROR:",
+    emailError
+  );
 
-        await User.findByIdAndDelete(
-          newUser._id
-        );
-
-        return res.status(500).json({
-          message:
-            "Account could not be created because the verification email could not be sent.",
-        });
-      }
+  // Do NOT delete the account.
+  // The account has already been created successfully.
+}
+ 
 
 
       console.log(
