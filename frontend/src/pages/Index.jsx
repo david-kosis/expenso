@@ -18,11 +18,11 @@ import {
 } from "../api/storage";
 
 import "./index.css";
+import "./dashboard-overrides.css";
 
 function Index() {
   const navigate = useNavigate();
 
-  // No dummy data. Customers are loaded from localStorage.
   const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState("");
   const [showProfile, setShowProfile] = useState(false);
