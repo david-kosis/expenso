@@ -28,103 +28,28 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <Routes>
-
-          {/* =========================
-              PUBLIC ROUTES
-          ========================== */}
-
-          <Route
-            path="/login"
-            element={<Login />}
-          />
-
-          <Route
-            path="/register"
-            element={<Register />}
-          />
-
-          <Route
-            path="/verify-email/:token"
-            element={<VerifyEmail />}
-          />
-
-          <Route
-            path="/forgot-password"
-            element={<ForgotPassword />}
-          />
-
-          <Route
-            path="/recovery-options"
-            element={<RecoveryOptions />}
-          />
-
-          <Route
-            path="/verify-code"
-            element={<VerifyCode />}
-          />
-
-          <Route
-            path="/reset-password"
-            element={<ResetPassword />}
-          />
-
-          <Route
-            path="/reset-password/:token"
-            element={<ResetPassword />}
-          />
-
-          {/* =========================
-              PROTECTED ROUTES
-          ========================== */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/recovery-options" element={<RecoveryOptions />} />
+          <Route path="/verify-code" element={<VerifyCode />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           <Route element={<ProtectedRoute />}>
-
-            <Route
-              path="/"
-              element={<Index />}
-            />
-
-            <Route
-              path="/customers"
-              element={<Customers />}
-            />
-
-            <Route
-              path="/suppliers"
-              element={<Suppliers />}
-            />
-
-            <Route
-              path="/products"
-              element={<Products />}
-            />
-
-            <Route
-              path="/reports"
-              element={<Reports />}
-            />
-
-            <Route
-              path="/account"
-              element={<Account />}
-            />
-
-            <Route
-              path="/account/settings"
-              element={<AccountSettings />}
-            />
-
+            <Route path="/" element={<Index />} />
+            <Route path="/customers" element={<Customers />} />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/products" element={<Products />} />
+            {/* Backwards-compatible singular route */}
+            <Route path="/product" element={<Products />} />
+            <Route path="/reports" element={<Reports />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/account/settings" element={<AccountSettings />} />
           </Route>
 
-          {/* =========================
-              UNKNOWN ROUTES
-          ========================== */}
-
-          <Route
-            path="*"
-            element={<Navigate to="/" replace />}
-          />
-
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
