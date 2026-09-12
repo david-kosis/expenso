@@ -1,74 +1,61 @@
 /* ================================
    LEGACY LAYOUT RESET
    The original global stylesheet contains older sidebar/header
-   selectors. Keep page/content styles, but prevent those legacy
-   selectors from controlling the new layout components.
+   selectors. These final rules stop them from overriding the new
+   component layout without touching the page-specific styles.
 ================================ */
 
-/* New layout owns these elements. */
-.app-layout .sidebar,
-.app-layout aside.sidebar {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 250px;
-  height: 100dvh;
-  margin: 0;
-}
-
-.app-layout .top-header {
-  display: flex;
-  align-items: center;
-  justify-content: initial;
-  margin: 0;
+.top-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: initial !important;
+  margin: 0 !important;
 }
 
 @media (max-width: 900px) {
-  .app-layout {
-    width: 100%;
-  }
-
-  .app-layout .sidebar,
-  .app-layout aside.sidebar {
+  .sidebar,
+  aside.sidebar {
     position: fixed !important;
     left: 0 !important;
     top: 0 !important;
     width: min(300px, 86vw) !important;
     height: 100dvh !important;
     margin: 0 !important;
-    transform: translateX(-105%);
-    z-index: 9000;
+    transform: translateX(-105%) !important;
+    z-index: 9000 !important;
   }
 
-  .app-layout .sidebar.sidebar-open,
-  .app-layout aside.sidebar.sidebar-open {
+  .sidebar.sidebar-open,
+  aside.sidebar.sidebar-open {
     transform: translateX(0) !important;
   }
 
-  .app-layout .sidebar-bottom {
+  .sidebar-bottom {
     display: block !important;
+    visibility: visible !important;
     margin-top: auto !important;
   }
 
-  .app-layout .top-header {
+  .sidebar-nav {
     display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .top-header {
+    display: flex !important;
+    flex-direction: row !important;
     width: 100% !important;
     margin: 0 !important;
   }
 }
 
 @media (max-width: 600px) {
-  .app-layout .sidebar-bottom {
+  .sidebar-bottom {
     display: block !important;
     visibility: visible !important;
   }
 
-  .app-layout .sidebar-nav {
-    display: flex !important;
-    flex-direction: column !important;
-  }
-
-  .app-layout .top-header {
+  .top-header {
     min-height: 64px !important;
     padding: 8px 10px !important;
     flex-direction: row !important;
@@ -77,11 +64,11 @@
 }
 
 @media (max-width: 420px) {
-  .app-layout .sidebar {
+  .sidebar {
     width: min(290px, 88vw) !important;
   }
 
-  .app-layout .top-header {
+  .top-header {
     min-height: 60px !important;
     padding: 7px 8px !important;
   }
