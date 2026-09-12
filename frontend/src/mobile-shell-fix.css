@@ -1,0 +1,216 @@
+/* =========================================================
+   EXPENSO MOBILE SHELL FIX
+   Loaded last so legacy index.css cannot break the new
+   header/sidebar system.
+========================================================= */
+
+@media (max-width: 900px) {
+  .expenso-app {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  .expenso-app .main-content {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  /* Never let the old aside/mobile rules turn the drawer into
+     a normal page element. */
+  .expenso-app .sidebar,
+  aside.sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: min(300px, 86vw) !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    margin: 0 !important;
+    padding: 22px 16px 18px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    transform: translate3d(-110%, 0, 0) !important;
+    visibility: hidden !important;
+    opacity: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    z-index: 10001 !important;
+    background: var(--white, #fff) !important;
+    border-right: 1px solid var(--border, #e7e9ef) !important;
+    border-bottom: 0 !important;
+    transition: transform .25s ease, visibility 0s linear .25s !important;
+  }
+
+  .expenso-app .sidebar.sidebar-open,
+  aside.sidebar.sidebar-open {
+    transform: translate3d(0, 0, 0) !important;
+    visibility: visible !important;
+    transition: transform .25s ease, visibility 0s linear 0s !important;
+    box-shadow: 18px 0 45px rgba(0,0,0,.22) !important;
+  }
+
+  .expenso-app .sidebar-nav {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 5px !important;
+  }
+
+  .expenso-app .sidebar-link {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 52px !important;
+    flex: 0 0 auto !important;
+  }
+
+  .expenso-app .sidebar-bottom {
+    display: block !important;
+    width: 100% !important;
+    margin-top: auto !important;
+    padding-top: 16px !important;
+    visibility: visible !important;
+  }
+
+  .expenso-app .sidebar-overlay {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    background: #000000a6 !important;
+    z-index: 10000 !important;
+  }
+
+  .expenso-app .mobile-menu-button {
+    display: flex !important;
+    position: fixed !important;
+    top: 11px !important;
+    left: 11px !important;
+    width: 42px !important;
+    height: 42px !important;
+    z-index: 10003 !important;
+  }
+
+  /* Keep the redesigned header above normal page content. */
+  .expenso-app .top-header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 7000 !important;
+    flex-direction: row !important;
+    width: 100% !important;
+  }
+
+  .account-page .main-content {
+    padding: 0 !important;
+  }
+
+  .account-page .account-main {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 22px 16px 40px !important;
+  }
+}
+
+@media (max-width: 650px) {
+  .expenso-app .top-header {
+    min-height: 62px !important;
+    height: 62px !important;
+    padding: 8px 10px !important;
+    gap: 8px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
+  .expenso-app .header-search {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+
+  .expenso-app .mobile-brand {
+    display: flex !important;
+    flex: 0 0 auto !important;
+  }
+
+  .expenso-app .header-actions {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+  }
+
+  .expenso-app .header-user,
+  .expenso-app .profile-button > i {
+    display: none !important;
+  }
+
+  .account-page .account-main {
+    padding: 18px 12px 32px !important;
+  }
+
+  .account-page .account-heading {
+    width: 100% !important;
+    margin-bottom: 16px !important;
+  }
+
+  .account-page .account-hero {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+  }
+
+  .account-page .account-hero-button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .account-page .account-identity-card {
+    display: grid !important;
+    grid-template-columns: auto 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .account-page .account-identity-action {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+
+  .account-page .account-identity-action button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .account-page .account-stat-grid {
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .expenso-app .sidebar,
+  aside.sidebar {
+    width: min(292px, 88vw) !important;
+  }
+
+  .expenso-app .mobile-menu-button {
+    width: 40px !important;
+    height: 40px !important;
+    top: 10px !important;
+    left: 10px !important;
+  }
+
+  .expenso-app .top-header {
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 7px 8px !important;
+  }
+}
+
+html[data-theme="dark"] .expenso-app .sidebar {
+  background: #121720 !important;
+  border-color: #242b38 !important;
+}
