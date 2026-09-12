@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
 import "./sidebar.css";
 
 function Sidebar() {
