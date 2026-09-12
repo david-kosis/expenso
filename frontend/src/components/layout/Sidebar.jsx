@@ -5,6 +5,15 @@ import "./sidebar.css";
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
+  
+
+  const {
+
+    isDark,
+
+    toggleTheme,
+
+  } = useTheme();
   const toggleSidebar = () => {
     setIsOpen((prev) => !prev);
   };
