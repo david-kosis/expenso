@@ -1,0 +1,203 @@
+/* =========================================================
+   EXPENSO AUTH LOADING SCREEN
+========================================================= */
+
+.auth-loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  min-height: 100dvh;
+  overflow: hidden;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(220, 38, 38, 0.14), transparent 34%),
+    linear-gradient(135deg, #fff 0%, #f8f9fb 52%, #f1f3f6 100%);
+  color: #171a21;
+}
+
+.auth-loading-glow {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.07);
+  filter: blur(70px);
+  animation: authGlow 2.8s ease-in-out infinite alternate;
+}
+
+.auth-loading-card {
+  position: relative;
+  z-index: 1;
+  width: min(390px, 100%);
+  padding: 34px 30px 30px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 24px 70px rgba(20, 25, 35, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  animation: authCardIn 0.45s ease both;
+}
+
+.auth-loading-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+.auth-loading-brand > div:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-loading-brand strong {
+  font-size: 21px;
+  line-height: 1.1;
+  letter-spacing: -0.4px;
+}
+
+.auth-loading-brand span {
+  margin-top: 4px;
+  color: #7a808c;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.auth-loading-logo {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #ef4444, #b91c1c);
+  color: #fff;
+  font-size: 25px;
+  font-weight: 800;
+  box-shadow: 0 12px 28px rgba(220, 38, 38, 0.28);
+}
+
+.auth-loading-loader {
+  position: relative;
+  width: 74px;
+  height: 74px;
+  margin: 0 auto 24px;
+  border: 5px solid #eceef2;
+  border-top-color: #dc2626;
+  border-right-color: #ef4444;
+  border-radius: 50%;
+  animation: authSpin 0.9s linear infinite;
+}
+
+.auth-loading-loader::after {
+  content: "";
+  position: absolute;
+  inset: 13px;
+  border-radius: 50%;
+  border: 2px solid rgba(220, 38, 38, 0.12);
+}
+
+.auth-loading-copy h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+}
+
+.auth-loading-copy p {
+  margin: 8px 0 0;
+  color: #7a808c;
+  font-size: 14px;
+}
+
+.auth-loading-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 22px;
+}
+
+.auth-loading-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #dc2626;
+  animation: authDot 1.2s ease-in-out infinite;
+}
+
+.auth-loading-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.auth-loading-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes authSpin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes authDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+
+@keyframes authGlow {
+  from { transform: scale(0.92); opacity: 0.55; }
+  to { transform: scale(1.08); opacity: 1; }
+}
+
+@keyframes authCardIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 480px) {
+  .auth-loading-screen {
+    padding: 16px;
+  }
+
+  .auth-loading-card {
+    padding: 28px 20px 25px;
+    border-radius: 22px;
+  }
+
+  .auth-loading-brand {
+    margin-bottom: 26px;
+  }
+
+  .auth-loading-loader {
+    width: 66px;
+    height: 66px;
+  }
+}
+
+html[data-theme="dark"] .auth-loading-screen {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(239, 68, 68, 0.12), transparent 34%),
+    linear-gradient(135deg, #090c11 0%, #10141b 55%, #151922 100%);
+  color: #f7f8fa;
+}
+
+html[data-theme="dark"] .auth-loading-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(18, 23, 32, 0.82);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+}
+
+html[data-theme="dark"] .auth-loading-brand span,
+html[data-theme="dark"] .auth-loading-copy p {
+  color: #9ca3af;
+}
+
+html[data-theme="dark"] .auth-loading-loader {
+  border-color: #292f3a;
+  border-top-color: #ef4444;
+  border-right-color: #f87171;
+}
