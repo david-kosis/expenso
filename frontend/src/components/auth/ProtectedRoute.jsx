@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { getCurrentUser } from "../../services/api";
 import { saveUser } from "../../api/storage";
+import "./auth-loading.css";
 
 function ProtectedRoute() {
   const location = useLocation();
@@ -15,18 +16,15 @@ function ProtectedRoute() {
     const checkAuthentication = async () => {
       const token = localStorage.getItem("token");
 
-      // No token = definitely not logged in
       if (!token) {
         if (mounted) {
           setAuthenticated(false);
           setChecking(false);
         }
-
         return;
       }
 
       try {
-        // Verify token against backend
         const user = await getCurrentUser();
 
         if (!user) {
@@ -39,10 +37,7 @@ function ProtectedRoute() {
           setAuthenticated(true);
         }
       } catch (error) {
-        console.error(
-          "Authentication check failed:",
-          error
-        );
+        console.error("Authentication check failed:", error);
 
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -66,15 +61,32 @@ function ProtectedRoute() {
 
   if (checking) {
     return (
-      <div className="auth-loading-screen">
+      <div className="auth-loading-screen" role="status" aria-live="polite">
+        <div className="auth-loading-glow" />
+
         <div className="auth-loading-card">
-          <div className="auth-loading-logo">E</div>
+          <div className="auth-loading-brand">
+            <div className="auth-loading-logo">E</div>
+            <div>
+              <strong>Expenso</strong>
+              <span>Business Manager</span>
+            </div>
+          </div>
 
-          <div className="auth-spinner" />
+          <div className="auth-loading-loader">
+            <span />
+          </div>
 
-          <h3>Loading Expenso</h3>
+          <div className="auth-loading-copy">
+            <h2>Welcome back</h2>
+            <p>Securely checking your account...</p>
+          </div>
 
-          <p>Checking your account...</p>
+          <div className="auth-loading-dots" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </div>
         </div>
       </div>
     );
