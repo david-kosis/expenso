@@ -5,9 +5,7 @@ import { API_URL } from "../../services/api";
 import "./header.css";
 
 function getProfileImageUrl(profilePicture) {
-  if (!profilePicture) {
-    return "";
-  }
+  if (!profilePicture) return "";
 
   if (
     profilePicture.startsWith("http://") ||
@@ -21,21 +19,33 @@ function getProfileImageUrl(profilePicture) {
   }${profilePicture}`;
 }
 
+function getInitials(name = "User") {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase() || "U";
+}
+
 function Header({ search = "", setSearch, onProfileClick }) {
   const [user, setUser] = useState(() => getUser() || {});
   const [profileImage, setProfileImage] = useState(() =>
     getProfileImageUrl(getUser()?.profilePicture)
   );
+  const [imageFailed, setImageFailed] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     const refresh = () => {
       const updatedUser = getUser() || {};
       setUser(updatedUser);
-      setProfileImage(
-        getProfileImageUrl(updatedUser.profilePicture)
-      );
+      setProfileImage(getProfileImageUrl(updatedUser.profilePicture));
+      setImageFailed(false);
     };
+
+    refresh();
 
     window.addEventListener("storage", refresh);
     window.addEventListener("expenso-profile-updated", refresh);
@@ -47,14 +57,7 @@ function Header({ search = "", setSearch, onProfileClick }) {
   }, []);
 
   const name = user?.name || "User";
-
-  const initials = name
-    .split(" ")
-    .filter(Boolean)
-    .map((word) => word[0])
-    .join("")
-    .substring(0, 2)
-    .toUpperCase();
+  const initials = getInitials(name);
 
   const handleProfileClick = () => {
     if (typeof onProfileClick === "function") {
@@ -62,6 +65,10 @@ function Header({ search = "", setSearch, onProfileClick }) {
     } else {
       setShowProfile(true);
     }
+  };
+
+  const handleImageError = () => {
+    setImageFailed(true);
   };
 
   return (
@@ -111,17 +118,17 @@ function Header({ search = "", setSearch, onProfileClick }) {
             onClick={handleProfileClick}
             aria-label="Open profile"
           >
-            {profileImage ? (
+            {profileImage && !imageFailed ? (
               <img
                 src={profileImage}
                 alt={name}
                 className="header-profile-image"
-                onError={(event) => {
-                  event.currentTarget.style.display = "none";
-                }}
+                onError={handleImageError}
               />
             ) : (
-              <div className="profile-avatar-small">{initials}</div>
+              <div className="profile-avatar-small" aria-hidden="true">
+                {initials}
+              </div>
             )}
 
             <div className="header-user">
