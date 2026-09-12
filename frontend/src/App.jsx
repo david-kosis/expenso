@@ -1,4 +1,9 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import Login from "./Login";
 import Register from "./Register";
@@ -9,7 +14,6 @@ import Products from "./pages/Products";
 import Reports from "./pages/Reports";
 import Account from "./pages/Account";
 import AccountSettings from "./pages/AccountSettings";
-
 import ForgotPassword from "./ForgotPassword";
 import RecoveryOptions from "./RecoveryOptions";
 import VerifyCode from "./VerifyCode";
@@ -17,106 +21,113 @@ import ResetPassword from "./ResetPassword";
 import VerifyEmail from "./VerifyEmail";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
+    <ThemeProvider>
+      <BrowserRouter>
+        <Routes>
 
-        {/* =========================
-            PUBLIC ROUTES
-        ========================== */}
-
-        <Route path="/login" element={<Login />} />
-
-        <Route path="/register" element={<Register />} />
-
-        <Route
-          path="/verify-email/:token"
-          element={<VerifyEmail />}
-        />
-
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
-
-        <Route
-          path="/recovery-options"
-          element={<RecoveryOptions />}
-        />
-
-        <Route
-          path="/verify-code"
-          element={<VerifyCode />}
-        />
-
-        <Route
-          path="/reset-password"
-          element={<ResetPassword />}
-        />
-
-        <Route
-          path="/reset-password/:token"
-          element={<ResetPassword />}
-        />
-
-
-        {/* =========================
-            PROTECTED ROUTES
-        ========================== */}
-
-        <Route element={<ProtectedRoute />}>
+          {/* =========================
+              PUBLIC ROUTES
+          ========================== */}
 
           <Route
-            path="/"
-            element={<Index />}
+            path="/login"
+            element={<Login />}
           />
 
           <Route
-            path="/customers"
-            element={<Customers />}
+            path="/register"
+            element={<Register />}
           />
 
           <Route
-            path="/suppliers"
-            element={<Suppliers />}
+            path="/verify-email/:token"
+            element={<VerifyEmail />}
           />
 
           <Route
-            path="/products"
-            element={<Products />}
+            path="/forgot-password"
+            element={<ForgotPassword />}
           />
 
           <Route
-            path="/reports"
-            element={<Reports />}
+            path="/recovery-options"
+            element={<RecoveryOptions />}
           />
 
           <Route
-            path="/account"
-            element={<Account />}
+            path="/verify-code"
+            element={<VerifyCode />}
           />
 
           <Route
-            path="/account/settings"
-            element={<AccountSettings />}
+            path="/reset-password"
+            element={<ResetPassword />}
           />
 
-        </Route>
+          <Route
+            path="/reset-password/:token"
+            element={<ResetPassword />}
+          />
 
+          {/* =========================
+              PROTECTED ROUTES
+          ========================== */}
 
-        {/* =========================
-            UNKNOWN ROUTES
-        ========================== */}
+          <Route element={<ProtectedRoute />}>
 
-        <Route
-          path="*"
-          element={<Navigate to="/" replace />}
-        />
+            <Route
+              path="/"
+              element={<Index />}
+            />
 
-      </Routes>
-    </BrowserRouter>
+            <Route
+              path="/customers"
+              element={<Customers />}
+            />
+
+            <Route
+              path="/suppliers"
+              element={<Suppliers />}
+            />
+
+            <Route
+              path="/products"
+              element={<Products />}
+            />
+
+            <Route
+              path="/reports"
+              element={<Reports />}
+            />
+
+            <Route
+              path="/account"
+              element={<Account />}
+            />
+
+            <Route
+              path="/account/settings"
+              element={<AccountSettings />}
+            />
+
+          </Route>
+
+          {/* =========================
+              UNKNOWN ROUTES
+          ========================== */}
+
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
+
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
