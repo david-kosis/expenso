@@ -24,9 +24,8 @@ export default function ProtectedRouteV2() {
       })
       .catch(() => {
         // A successful login already authenticated this navigation. Keep the
-        // dashboard mounted when the immediate session re-check races the
-        // browser cookie write; future navigations still perform the normal
-        // server-side session check.
+        // dashboard mounted if the immediate session re-check races the
+        // browser cookie write.
         if (!loginUser) {
           removeUser();
           if (mounted) setAuthenticated(false);
@@ -37,7 +36,7 @@ export default function ProtectedRouteV2() {
       });
 
     return () => { mounted = false; };
-  }, [location.state?.authUser]);
+  }, []);
 
   if (checking) {
     return (
