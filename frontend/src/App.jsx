@@ -23,6 +23,7 @@ import VerifyEmail from "./VerifyEmail";
 import ProtectedRoute from "./components/auth/ProtectedRouteV2";
 import WorkspaceSync from "./components/auth/WorkspaceSync";
 import { ThemeProvider } from "./context/ThemeContext";
+import "./mobile-ui.css";
 
 function App() {
   return (
@@ -40,14 +41,14 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route element={<WorkspaceSync />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/suppliers" element={<Suppliers />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/product" element={<Products />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/account/settings" element={<AccountSettings />} />
+              <Route path="/" element={<Index />} />
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/suppliers" element={<Suppliers />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/product" element={<Products />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/account/settings" element={<AccountSettings />} />
             </Route>
           </Route>
 
