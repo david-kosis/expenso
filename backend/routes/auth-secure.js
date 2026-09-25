@@ -20,11 +20,11 @@ function cleanEmail(value) {
 function cookieOptions(maxAge = SESSION_MAX_AGE) {
   const sameSite = process.env.COOKIE_SAMESITE || (process.env.NODE_ENV === "production" ? "None" : "Lax");
   const secure = process.env.NODE_ENV === "production" || sameSite === "None";
-  return `HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=${sameSite}${secure ? "; Secure" : ""}`;
+  return `HttpOnly; Path=/;${maxAge ? ` Max-Age=${maxAge};` : ""} SameSite=${sameSite}${secure ? "; Secure" : ""}`;
 }
 
 function setSession(res, token, persistent = true) {
-  const maxAge = persistent ? SESSION_MAX_AGE : 0;
+  const maxAge = persistent ? SESSION_MAX_AGE : null;
   res.setHeader("Set-Cookie", `${COOKIE_NAME}=${token}; ${cookieOptions(maxAge)}`);
 }
 
