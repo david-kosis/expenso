@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginUser } from "./services/api";
-import { saveUser } from "./api/storage";
+import { saveUser, saveToken } from "./api/storage";
 import "./auth-v2.css";
 
 function Login() {
@@ -24,7 +24,7 @@ function Login() {
     try {
       setLoading(true);
       const data = await loginUser(cleanEmail, password, remember);
-      saveUser(data.user);
+      saveUser(data.user);\n      if (data.token) saveToken(data.token);
 
       if (!remember) sessionStorage.setItem("expensoSessionPreference", "session");
       else sessionStorage.removeItem("expensoSessionPreference");
