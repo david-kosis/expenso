@@ -56,10 +56,10 @@ export async function removeProfilePicture() {
   return request("/api/user/profile-picture", { method: "DELETE" });
 }
 
-export async function loginUser(email, password) {
+export async function loginUser(email, password, remember = true) {
   return request("/api/auth/login", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email, password, remember }),
   });
 }
 
