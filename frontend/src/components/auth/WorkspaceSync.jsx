@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
-import { getWorkspace, saveWorkspace } from "../services/workspace";
-import { getUser } from "../api/storage";
+import { getWorkspace, saveWorkspace } from "../../services/workspace";
+import { getUser } from "../../api/storage";
 
 const keyFor = (prefix, userId) => `${prefix}${userId}`;
 
