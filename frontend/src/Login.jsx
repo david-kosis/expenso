@@ -23,7 +23,7 @@ function Login() {
 
     try {
       setLoading(true);
-      const data = await loginUser(cleanEmail, password);
+      const data = await loginUser(cleanEmail, password, remember);
       saveUser(data.user);
 
       if (!remember) sessionStorage.setItem("expensoSessionPreference", "session");
