@@ -186,7 +186,7 @@ router.post("/login", async (req, res) => {
     resetAttempts(ip, email);
     setSession(res, issueToken(user), remember);
     res.setHeader("Cache-Control", "no-store");
-    return res.json({ message: "Login successful.", user: publicUser(user) });
+    return res.json({ message: "Login successful.", token: issueToken(user), user: publicUser(user) });
   } catch (error) {
     console.error("SECURE LOGIN ERROR:", error.message);
     return res.status(500).json({ message: "Unable to sign in right now." });
