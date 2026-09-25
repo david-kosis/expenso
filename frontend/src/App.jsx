@@ -21,6 +21,7 @@ import ResetPassword from "./ResetPasswordV2";
 import VerifyEmail from "./VerifyEmail";
 
 import ProtectedRoute from "./components/auth/ProtectedRouteV2";
+import WorkspaceSync from "./components/auth/WorkspaceSync";
 import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           <Route element={<ProtectedRoute />}>
+            <Route element={<WorkspaceSync />}>
             <Route path="/" element={<Index />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/suppliers" element={<Suppliers />} />
@@ -46,6 +48,7 @@ function App() {
             <Route path="/reports" element={<Reports />} />
             <Route path="/account" element={<Account />} />
             <Route path="/account/settings" element={<AccountSettings />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
