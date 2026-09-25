@@ -264,6 +264,15 @@ function Account() {
   // CHANGE SECTION
   // =========================================
 
+  const handleLogout = async () => {
+    try { await logoutUser(); } catch {}
+    removeUser();
+    removeToken();
+    localStorage.removeItem("token");
+    sessionStorage.clear();
+    navigate("/login", { replace: true });
+  };
+
   const goTo = (section) => {
     if (section === "overview") {
       setSearchParams({});

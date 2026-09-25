@@ -1,772 +1,96 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import { registerUser } from "./services/api";
+import "./auth-v2.css";
 
-import "./App.css";
-import "./modal/RegistrationSuccessModal.css";
+function passwordStrength(password) {
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (/[a-z]/.test(password)) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/\d/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+  return score;
+}
 
 function Register() {
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [showPassword, setShowPassword] =
-    useState(false);
-
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState(false);
-
+  const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const score = useMemo(() => passwordStrength(form.password), [form.password]);
+  const strengthLabel = score >= 5 ? "Strong" : score >= 4 ? "Good" : score >= 2 ? "Needs work" : "Too weak";
 
-  const [showSuccessModal, setShowSuccessModal] =
-    useState(false);
+  const update = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
 
-  const [registeredEmail, setRegisteredEmail] =
-    useState("");
-
-
-  /* =====================================================
-     HANDLE INPUT
-  ===================================================== */
-
-  const handleChange = (e) => {
-    const {
-      name,
-      value,
-    } = e.target;
-
-    setFormData((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
-  };
-
-
-  /* =====================================================
-     REGISTER
-  ===================================================== */
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setMessage("");
 
-    const name =
-      formData.name.trim();
-
-    const email =
-      formData.email
-        .trim()
-        .toLowerCase();
-
-    const password =
-      formData.password;
-
-    const confirmPassword =
-      formData.confirmPassword;
-
-
-    /* PASSWORD CHECK */
-
-    if (
-      password !==
-      confirmPassword
-    ) {
-      setMessage(
-        "Passwords do not match."
-      );
-
-      return;
-    }
-
-
-    if (password.length < 6) {
-      setMessage(
-        "Password must be at least 6 characters."
-      );
-
-      return;
-    }
-
+    if (form.name.trim().length < 2) return setMessage("Enter your full name.");
+    if (!/^\S+@\S+\.\S+$/.test(form.email.trim())) return setMessage("Enter a valid email address.");
+    if (score < 4) return setMessage("Choose a stronger password: use at least 8 characters with upper/lowercase letters, numbers and a symbol.");
+    if (form.password !== form.confirmPassword) return setMessage("Your passwords do not match.");
+    if (!accepted) return setMessage("Please accept the terms before creating your account.");
 
     try {
-
       setLoading(true);
-
-      const data =
-        await registerUser(
-          name,
-          email,
-          password
-        );
-
-
-      if (data) {
-
-        /*
-          Save the email so the modal can
-          display it after the form is cleared.
-        */
-
-        setRegisteredEmail(
-          email
-        );
-
-
-        /*
-          Remove any previous error.
-        */
-
-        setMessage("");
-
-
-        /*
-          Show success modal.
-        */
-
-        setShowSuccessModal(
-          true
-        );
-
-
-        /*
-          Reset ALL form fields.
-
-          confirmPassword is included so
-          the controlled input never becomes
-          uncontrolled.
-        */
-
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-        });
-
-      }
-
+      const data = await registerUser(form.name.trim(), form.email.trim().toLowerCase(), form.password);
+      sessionStorage.setItem("pendingVerificationEmail", form.email.trim().toLowerCase());
+      navigate("/login", { replace: true, state: { message: data.message } });
     } catch (error) {
-
-      console.error(
-        "REGISTER ERROR:",
-        error
-      );
-
-      setMessage(
-       
-          "Registration failed."
-      );
-
+      setMessage(error.message || "Unable to create your account.");
     } finally {
-
       setLoading(false);
-
     }
   };
 
-
-  /* =====================================================
-     CLOSE SUCCESS MODAL
-  ===================================================== */
-
-  const closeSuccessModal = () => {
-
-    setShowSuccessModal(
-      false
-    );
-
-    navigate("/login");
-
-  };
-
-
   return (
-    <div className="register-page">
-
-      {/* =================================================
-          LEFT SIDE
-      ================================================= */}
-
-      <section className="left-side">
-
-        <div className="welcome">
-
-          <small>
-            Business account management
-          </small>
-
-
-          <h1>
-            Start managing your
-            <span>business.</span>
-          </h1>
-
-
-          <p>
-            Create your Expenso account and
-            manage customers, suppliers, sales
-            and payments from one place.
-          </p>
-
-
-          <div className="features">
-
-            {/* FEATURE 1 */}
-
-            <div className="feature">
-
-              <div className="feature-icon">
-
-                <i className="fa-solid fa-chart-line"></i>
-
-              </div>
-
-
-              <div>
-
-                <h4>
-                  Track your sales
-                </h4>
-
-                <p>
-                  Monitor your business
-                  transactions easily.
-                </p>
-
-              </div>
-
-            </div>
-
-
-            {/* FEATURE 2 */}
-
-            <div className="feature">
-
-              <div className="feature-icon">
-
-                <i className="fa-solid fa-users"></i>
-
-              </div>
-
-
-              <div>
-
-                <h4>
-                  Manage customers
-                </h4>
-
-                <p>
-                  Keep your customer accounts
-                  organized.
-                </p>
-
-              </div>
-
-            </div>
-
-
-            {/* FEATURE 3 */}
-
-            <div className="feature">
-
-              <div className="feature-icon">
-
-                <i className="fa-solid fa-file-invoice"></i>
-
-              </div>
-
-
-              <div>
-
-                <h4>
-                  Simple reports
-                </h4>
-
-                <p>
-                  Understand your business
-                  performance.
-                </p>
-
-              </div>
-
-            </div>
-
+    <main className="auth-page auth-page-register">
+      <section className="auth-brand-panel">
+        <div className="auth-brand"><div className="auth-logo">E</div><div><strong>Expenso</strong><span>Business Manager</span></div></div>
+        <div className="auth-brand-content">
+          <span className="auth-eyebrow">START WITH A CLEAN SLATE</span>
+          <h1>Build a clearer<br /><em>business day.</em></h1>
+          <p>Set up your workspace once, then keep your customers, inventory and cash flow organized.</p>
+          <div className="auth-trust-grid">
+            <div><i className="fa-solid fa-user-check" /><span><b>Email verified</b><small>Account activation before access</small></span></div>
+            <div><i className="fa-solid fa-lock" /><span><b>Protected passwords</b><small>Slow, salted password hashing</small></span></div>
+            <div><i className="fa-solid fa-bolt" /><span><b>Fast setup</b><small>Only the information we need</small></span></div>
           </div>
-
         </div>
-
-
-        <div className="copyright">
-          © 2026 Expenso. All rights reserved.
-        </div>
-
+        <small className="auth-footer">© 2026 Expenso · Built for growing businesses</small>
       </section>
 
+      <section className="auth-form-panel">
+        <div className="auth-card auth-card-register">
+          <div className="auth-card-top"><span className="auth-mini-label">CREATE ACCOUNT</span><h2>Start using Expenso</h2><p>It takes less than a minute to set up your account.</p></div>
+          {message && <div className="auth-alert" role="alert"><i className="fa-solid fa-circle-exclamation" />{message}</div>}
 
-      {/* =================================================
-          RIGHT SIDE
-      ================================================= */}
-
-      <section className="right-side">
-
-        <div className="register-card">
-
-
-          {/* HEADER */}
-
-          <div className="register-header">
-
-            <h2>
-              Create your account
-            </h2>
-
-            <p>
-              Fill in your details to get
-              started with Expenso.
-            </p>
-
-          </div>
-
-
-          {/* FORM */}
-
-          <form
-            id="registerForm"
-            onSubmit={handleSubmit}
-            className="register-form"
-          >
-
-
-            {/* =================================================
-                FULL NAME
-            ================================================= */}
-
-            <div className="input-group">
-
-              <label htmlFor="name">
-                Full name
-              </label>
-
-
-              <div className="input-wrapper">
-
-                <i className="fa-regular fa-user"></i>
-
-
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  placeholder="Full Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                />
-
-              </div>
-
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="auth-field"><label htmlFor="register-name">Full name</label><div className="auth-input"><i className="fa-regular fa-user" /><input id="register-name" name="name" type="text" autoComplete="name" value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="Your name" required /></div></div>
+            <div className="auth-field"><label htmlFor="register-email">Email address</label><div className="auth-input"><i className="fa-regular fa-envelope" /><input id="register-email" name="email" type="email" autoComplete="username" inputMode="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@example.com" required /></div></div>
+            <div className="auth-field">
+              <label htmlFor="new-password">Password</label>
+              <div className="auth-input"><i className="fa-solid fa-lock" /><input id="new-password" name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" aria-describedby="password-help" value={form.password} onChange={(e) => update("password", e.target.value)} placeholder="Create a strong password" required /><button type="button" className="auth-icon-button" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? "Hide password" : "Show password"}><i className={showPassword ? "fa-regular fa-eye-slash" : "fa-regular fa-eye"} /></button></div>
+              <div id="password-help" className="password-meter"><div className="password-meter-track"><span style={{ width: `${Math.min(score / 6, 1) * 100}%` }} /></div><span>{strengthLabel} · Use 8+ characters, upper/lowercase, number and symbol.</span></div>
             </div>
-
-
-            {/* =================================================
-                EMAIL
-            ================================================= */}
-
-            <div className="input-group">
-
-              <label htmlFor="email">
-                Email address
-              </label>
-
-
-              <div className="input-wrapper">
-
-                <i className="fa-regular fa-envelope"></i>
-
-
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-
-              </div>
-
-            </div>
-
-
-            {/* =================================================
-                PASSWORD
-            ================================================= */}
-
-            <div className="input-group">
-
-              <label htmlFor="password">
-                Password
-              </label>
-
-
-              <div className="input-wrapper">
-
-                <i className="fa-solid fa-lock"></i>
-
-
-                <input
-                  id="password"
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
-
-
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() =>
-                    setShowPassword(
-                      (previous) =>
-                        !previous
-                    )
-                  }
-                  aria-label={
-                    showPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
-                >
-
-                  <i
-                    className={`fa-regular ${
-                      showPassword
-                        ? "fa-eye-slash"
-                        : "fa-eye"
-                    }`}
-                  ></i>
-
-                </button>
-
-              </div>
-
-            </div>
-
-
-            {/* =================================================
-                PASSWORD STRENGTH
-            ================================================= */}
-
-            <div
-              className="password-strength"
-              id="passwordStrength"
-            >
-
-              <div className="strength-bar">
-
-                <div
-                  className="strength-fill"
-                  id="strengthFill"
-                ></div>
-
-              </div>
-
-
-              <span
-                className="strength-text"
-                id="strengthText"
-              >
-                Password strength
-              </span>
-
-            </div>
-
-
-            {/* =================================================
-                CONFIRM PASSWORD
-            ================================================= */}
-
-            <div className="input-group">
-
-              <label htmlFor="confirmPassword">
-                Confirm password
-              </label>
-
-
-              <div className="input-wrapper">
-
-                <i className="fa-solid fa-lock"></i>
-
-
-                <input
-                  id="confirmPassword"
-                  type={
-                    showConfirmPassword
-                      ? "text"
-                      : "password"
-                  }
-                  name="confirmPassword"
-                  placeholder="Confirm your password"
-                  value={
-                    formData.confirmPassword
-                  }
-                  onChange={handleChange}
-                  required
-                />
-
-
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={() =>
-                    setShowConfirmPassword(
-                      (previous) =>
-                        !previous
-                    )
-                  }
-                  aria-label={
-                    showConfirmPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
-                >
-
-                  <i
-                    className={`fa-regular ${
-                      showConfirmPassword
-                        ? "fa-eye-slash"
-                        : "fa-eye"
-                    }`}
-                  ></i>
-
-                </button>
-
-              </div>
-
-            </div>
-
-
-            {/* =================================================
-                TERMS
-            ================================================= */}
-
-            <label className="terms">
-
-              <input
-                type="checkbox"
-                id="terms"
-                required
-              />
-
-
-              <span>
-
-                I agree to the{" "}
-
-                <a
-                  href="#"
-                  onClick={(e) =>
-                    e.preventDefault()
-                  }
-                >
-                  Terms of Service
-                </a>{" "}
-
-                and{" "}
-
-                <a
-                  href="#"
-                  onClick={(e) =>
-                    e.preventDefault()
-                  }
-                >
-                  Privacy Policy
-                </a>.
-
-              </span>
-
-            </label>
-
-
-            {/* =================================================
-                ERROR MESSAGE
-            ================================================= */}
-
-            {message && (
-
-              <div className="mess">
-
-                <p>
-                  {message}
-                </p>
-
-              </div>
-
-            )}
-
-
-            {/* =================================================
-                REGISTER BUTTON
-            ================================================= */}
-
-            <button
-              className="register-btn"
-              type="submit"
-              disabled={loading}
-            >
-
-              {loading
-                ? "Creating Account..."
-                : "Create Account"}
-
-            </button>
-
+            <div className="auth-field"><label htmlFor="confirm-password">Confirm password</label><div className="auth-input"><i className="fa-solid fa-lock" /><input id="confirm-password" name="confirmPassword" type={showConfirm ? "text" : "password"} autoComplete="new-password" value={form.confirmPassword} onChange={(e) => update("confirmPassword", e.target.value)} placeholder="Repeat your password" required /><button type="button" className="auth-icon-button" onClick={() => setShowConfirm((v) => !v)} aria-label={showConfirm ? "Hide password" : "Show password"}><i className={showConfirm ? "fa-regular fa-eye-slash" : "fa-regular fa-eye"} /></button></div></div>
+            <label className="auth-check"><input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} /><span>I agree to the Expenso terms and privacy practices.</span></label>
+            <button className="auth-submit" type="submit" disabled={loading}>{loading ? <><span className="auth-spinner" /> Creating account…</> : <>Create account <i className="fa-solid fa-arrow-right" /></>}</button>
           </form>
 
-
-          {/* =================================================
-              LOGIN LINK
-          ================================================= */}
-
-          <div className="login-link">
-
-            Already have an account?{" "}
-
-            <Link to="/login">
-              Sign in
-            </Link>
-
-          </div>
-
-
+          <div className="auth-divider"><span>ALREADY HAVE AN ACCOUNT?</span></div>
+          <Link className="auth-secondary" to="/login">Sign in instead</Link>
+          <p className="auth-legal">You’ll need to verify your email before you can access the dashboard.</p>
         </div>
-
       </section>
-
-
-      {/* =================================================
-          SUCCESS MODAL
-      ================================================= */}
-
-      {showSuccessModal && (
-
-        <div
-          className="registration-modal-overlay"
-          onClick={(e) => {
-
-            if (
-              e.target ===
-              e.currentTarget
-            ) {
-              closeSuccessModal();
-            }
-
-          }}
-        >
-
-          <div className="registration-success-modal">
-
-            {/* CLOSE */}
-
-            <button
-              type="button"
-              className="registration-modal-close"
-              onClick={
-                closeSuccessModal
-              }
-              aria-label="Close"
-            >
-
-              <i className="fa-solid fa-xmark"></i>
-
-            </button>
-
-
-            {/* SUCCESS ICON */}
-
-            <div className="registration-success-icon">
-
-              <i className="fa-solid fa-check"></i>
-
-            </div>
-
-
-            {/* CONTENT */}
-
-            <div className="registration-success-content">
-
-              <h2>
-                Registration successful!
-              </h2>
-
-
-              <p>
-                Your Expenso account has been
-                created successfully.
-              </p>
-
-
-              {registeredEmail && (
-
-                <div className="registration-email">
-
-                  <i className="fa-regular fa-envelope"></i>
-
-                  <span>
-                    {registeredEmail}
-                  </span>
-
-                </div>
-
-              )}
-
-
-              <p className="registration-instruction">
-                You can now sign in to your
-                account using your email and
-                password.
-              </p>
-
-            </div>
-
-
-            {/* LOGIN BUTTON */}
-
-            <button
-              type="button"
-              className="registration-modal-button"
-              onClick={
-                closeSuccessModal
-              }
-            >
-              Go to Login
-            </button>
-
-          </div>
-
-        </div>
-
-      )}
-
-    </div>
+    </main>
   );
 }
 

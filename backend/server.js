@@ -1,123 +1,62 @@
-
-
 const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
-
-dotenv.config();
 const path = require("path");
 
-
-
-
-// =====================================================
-// TEST ENVIRONMENT VARIABLES
-// =====================================================
-
-console.log("EMAIL USER:", process.env.EMAIL_USER);
-
-console.log(
-  "EMAIL PASSWORD EXISTS:",
-  !!process.env.EMAIL_PASSWORD
-);
-
-console.log(
-  "MONGO URI EXISTS:",
-  !!process.env.MONGO_URI
-);
-
-
-// =====================================================
-// IMPORT ROUTES
-// IMPORTANT: This must come AFTER dotenv.config()
-// =====================================================
+dotenv.config();
 
 const authRoutes = require("./routes/auth");
+const secureAuthRoutes = require("./routes/auth-secure");
 const userRoutes = require("./routes/user");
-
-
-
-// =====================================================
-// CREATE EXPRESS APP
-// =====================================================
+const workspaceRoutes = require("./routes/workspace");
+const securityHeaders = require("./middleware/security");
 
 const app = express();
 
+app.disable("x-powered-by");
+app.set("trust proxy", 1);
 
-// =====================================================
-// MIDDLEWARE
-// =====================================================
+const frontendOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
 
-app.use(cors());
-
-app.use(
-  express.json({ limit: "10mb" })
-);
-app.use(
-  "/uploads",
-  express.static(path.join(__dirname, "uploads"))
-);
-
-
-// =====================================================
-// AUTH ROUTES
-// =====================================================
+app.use(securityHeaders);
 
 app.use(
-  "/api/user",
-  userRoutes
+  cors({
+    origin: frontendOrigin,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
 );
 
-app.use(
-  "/api/auth",
-  authRoutes
-);
+app.use(express.json({ limit: "2mb" }));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-
-// =====================================================
-// TEST ROUTE
-// =====================================================
-
-app.get("/", (req, res) => {
-  res.send("Backend is working!");
+app.get("/api/health", (req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json({ ok: true, service: "expenso-api" });
 });
 
+app.use("/api/user", userRoutes);
+app.use("/api/workspace", workspaceRoutes);
 
-// =====================================================
-// MONGODB CONNECTION
-// =====================================================
+/*
+ * Secure authentication routes intentionally run before the legacy
+ * authentication router. This keeps existing endpoints compatible while
+ * moving login/session/recovery traffic to the hardened implementation.
+ */
+app.use("/api/auth", secureAuthRoutes);
+app.use("/api/auth", authRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Expenso API is running.");
+});
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
-
-    console.log(
-      "✅ MongoDB connected successfully"
-    );
-
-  })
-  .catch((error) => {
-
-    console.error(
-      "❌ MongoDB connection error:",
-      error.message
-    );
-
-  });
-
-
-// =====================================================
-// START SERVER
-// =====================================================
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((error) => console.error("MongoDB connection error:", error.message));
 
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-
-  console.log(
-    `🚀 Server running on http://localhost:${PORT}`
-  );
-
-});
+app.listen(PORT, () => console.log(`Expenso API listening on port ${PORT}`));

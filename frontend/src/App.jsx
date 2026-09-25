@@ -16,12 +16,14 @@ import Account from "./pages/Account";
 import AccountSettings from "./pages/AccountSettings";
 import ForgotPassword from "./ForgotPassword";
 import RecoveryOptions from "./RecoveryOptions";
-import VerifyCode from "./VerifyCode";
-import ResetPassword from "./ResetPassword";
+import VerifyCode from "./VerifyCodeV2";
+import ResetPassword from "./ResetPasswordV2";
 import VerifyEmail from "./VerifyEmail";
 
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ProtectedRoute from "./components/auth/ProtectedRouteV2";
+import WorkspaceSync from "./components/auth/WorkspaceSync";
 import { ThemeProvider } from "./context/ThemeContext";
+import "./mobile-ui.css";
 
 function App() {
   return (
@@ -38,15 +40,16 @@ function App() {
           <Route path="/reset-password/:token" element={<ResetPassword />} />
 
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/suppliers" element={<Suppliers />} />
-            <Route path="/products" element={<Products />} />
-            {/* Backwards-compatible singular route */}
-            <Route path="/product" element={<Products />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/account/settings" element={<AccountSettings />} />
+            <Route element={<WorkspaceSync />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/customers" element={<Customers />} />
+              <Route path="/suppliers" element={<Suppliers />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/product" element={<Products />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/account/settings" element={<AccountSettings />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
