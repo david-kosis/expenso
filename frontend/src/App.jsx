@@ -20,7 +20,7 @@ import VerifyCode from "./VerifyCode";
 import ResetPassword from "./ResetPassword";
 import VerifyEmail from "./VerifyEmail";
 
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ProtectedRoute from "./components/auth/ProtectedRouteV2";
 import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
@@ -42,7 +42,6 @@ function App() {
             <Route path="/customers" element={<Customers />} />
             <Route path="/suppliers" element={<Suppliers />} />
             <Route path="/products" element={<Products />} />
-            {/* Backwards-compatible singular route */}
             <Route path="/product" element={<Products />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/account" element={<Account />} />
