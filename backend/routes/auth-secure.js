@@ -196,6 +196,7 @@ router.post("/login", async (req, res) => {
 router.post("/logout", (req, res) => {
   clearSession(res);
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Clear-Site-Data", "\"cache\", \"cookies\"");
   return res.json({ message: "Signed out successfully." });
 });
 
