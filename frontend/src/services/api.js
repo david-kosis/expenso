@@ -3,6 +3,10 @@ export const API_URL =
 
 async function request(endpoint, options = {}) {
   const headers = { ...(options.headers || {}) };
+  const token = localStorage.getItem("token");
+  if (token && !headers.Authorization) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   if (options.body && !(options.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
