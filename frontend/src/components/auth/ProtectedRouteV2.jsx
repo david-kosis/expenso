@@ -7,10 +7,13 @@ import "./auth-loading.css";
 export default function ProtectedRouteV2() {
   const location = useLocation();
   const [checking, setChecking] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(() => Boolean(location.state?.authUser));
 
   useEffect(() => {
     let mounted = true;
+
+    const loginUser = location.state?.authUser;
+    if (loginUser) saveUser(loginUser);
 
     getCurrentUser()
       .then((user) => {
@@ -20,15 +23,21 @@ export default function ProtectedRouteV2() {
         setAuthenticated(true);
       })
       .catch(() => {
-        removeUser();
-        if (mounted) setAuthenticated(false);
+        // A successful login already authenticated this navigation. Keep the
+        // dashboard mounted when the immediate session re-check races the
+        // browser cookie write; future navigations still perform the normal
+        // server-side session check.
+        if (!loginUser) {
+          removeUser();
+          if (mounted) setAuthenticated(false);
+        }
       })
       .finally(() => {
         if (mounted) setChecking(false);
       });
 
     return () => { mounted = false; };
-  }, []);
+  }, [location.state?.authUser]);
 
   if (checking) {
     return (
