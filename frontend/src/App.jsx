@@ -16,8 +16,8 @@ import Account from "./pages/Account";
 import AccountSettings from "./pages/AccountSettings";
 import ForgotPassword from "./ForgotPassword";
 import RecoveryOptions from "./RecoveryOptions";
-import VerifyCode from "./VerifyCode";
-import ResetPassword from "./ResetPassword";
+import VerifyCode from "./VerifyCodeV2";
+import ResetPassword from "./ResetPasswordV2";
 import VerifyEmail from "./VerifyEmail";
 
 import ProtectedRoute from "./components/auth/ProtectedRouteV2";
