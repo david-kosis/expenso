@@ -9,6 +9,7 @@ dotenv.config();
 const authRoutes = require("./routes/auth");
 const secureAuthRoutes = require("./routes/auth-secure");
 const userRoutes = require("./routes/user");
+const workspaceRoutes = require("./routes/workspace");
 const securityHeaders = require("./middleware/security");
 
 const app = express();
@@ -38,6 +39,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/user", userRoutes);
+app.use("/api/workspace", workspaceRoutes);
 
 /*
  * Secure authentication routes intentionally run before the legacy
