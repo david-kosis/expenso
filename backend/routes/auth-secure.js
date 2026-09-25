@@ -17,14 +17,15 @@ function cleanEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
 
-function cookieOptions() {
+function cookieOptions(maxAge = SESSION_MAX_AGE) {
   const sameSite = process.env.COOKIE_SAMESITE || (process.env.NODE_ENV === "production" ? "None" : "Lax");
   const secure = process.env.NODE_ENV === "production" || sameSite === "None";
-  return `HttpOnly; Path=/; Max-Age=${SESSION_MAX_AGE}; SameSite=${sameSite}${secure ? "; Secure" : ""}`;
+  return `HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=${sameSite}${secure ? "; Secure" : ""}`;
 }
 
-function setSession(res, token) {
-  res.setHeader("Set-Cookie", `${COOKIE_NAME}=${token}; ${cookieOptions()}`);
+function setSession(res, token, persistent = true) {
+  const maxAge = persistent ? SESSION_MAX_AGE : 0;
+  res.setHeader("Set-Cookie", `${COOKIE_NAME}=${token}; ${cookieOptions(maxAge)}`);
 }
 
 function clearSession(res) {
@@ -163,6 +164,7 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const email = cleanEmail(req.body.email);
   const password = req.body.password;
+  const remember = req.body.remember !== false;
   const ip = req.ip || req.socket.remoteAddress || "unknown";
 
   try {
@@ -182,7 +184,7 @@ router.post("/login", async (req, res) => {
     }
 
     resetAttempts(ip, email);
-    setSession(res, issueToken(user));
+    setSession(res, issueToken(user), remember);
     res.setHeader("Cache-Control", "no-store");
     return res.json({ message: "Login successful.", user: publicUser(user) });
   } catch (error) {
