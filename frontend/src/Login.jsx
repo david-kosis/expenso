@@ -29,7 +29,7 @@ function Login() {
       if (!remember) sessionStorage.setItem("expensoSessionPreference", "session");
       else sessionStorage.removeItem("expensoSessionPreference");
 
-      navigate(location.state?.from || "/", { replace: true });
+      navigate(location.state?.from || "/", { replace: true, state: { authUser: data.user } });
     } catch (error) {
       if (error.status === 403 && error.data?.emailVerificationRequired) setMessage("Please verify your email before signing in.");
       else if (error.status === 429) setMessage("Too many attempts. Please wait a few minutes and try again.");
